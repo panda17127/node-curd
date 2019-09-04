@@ -23,6 +23,15 @@
 var express = require('express');
 var Student = require('./student');
 
+
+Student.updateById({
+	id: 1,
+	name: '修改hou'
+}, function (err, data) {
+	if (err) {
+		console.log('保存失败');
+	}
+})
 // 1. 创建一个路由容器
 var router = express.Router();
 
@@ -72,6 +81,19 @@ router.post('/students/new', function(req, res) {
 		}
 	})
 	res.redirect('/students');
+})
+
+// 渲染编辑页面
+router.get('/students/edit', function (req, res) {
+	
+	Student.findById(parseInt(req.query.id), function (err, student) {
+		if (err) {
+			return res.status(500).send('Server error.');
+		}
+		res.render('edit.html', {
+			student: student
+		})
+	})
 })
 
 // 3. 把 router 导出

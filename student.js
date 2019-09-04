@@ -40,8 +40,28 @@ exports.save = function (student, callback) {
 /**
  * 更新学生信息
  */
-exports.update = function () {
-
+exports.updateById = function (student, callback) {
+	fs.readFile(dbPath, 'utf8', function(err, data) {
+		if (err) {
+			return callback(err);
+		}
+		var students = JSON.parse(data).students;
+		var stu = students.find((item) => {
+			return item.id === student.id;
+		})
+		for (var key in student) {
+			stu[key] = student[key];
+		}
+		var fileData = JSON.stringify({
+			students: students
+		});
+		fs.writeFile(dbPath, fileData, function(err, data) {
+			if (err) {
+				return callback(err);
+			}
+			callback(null);
+		})
+	})
 }
 
 /**
@@ -49,4 +69,23 @@ exports.update = function () {
  */
 exports.delete = function () {
 
+}
+
+/**
+ * 根据 id 查询
+ * @param  {[type]}   id       [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
+exports.findById = function (id, callback) {
+	fs.readFile(dbPath, 'utf8', function(err, data) {
+		if (err) {
+			return callback(err);
+		}
+		var students = JSON.parse(data).students;
+		var ret = students.find((item) => {
+			return item.id === id;
+		})
+		callback(null, ret);
+	})
 }
